@@ -1,6 +1,8 @@
 import React from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import moment from 'moment'
+import 'moment/locale/pt-br'
 
 export default class App extends React.Component {
 
@@ -14,15 +16,33 @@ export default class App extends React.Component {
         latitudeDelta: 0.095,
         longitudeDelta: 0.0121,
       },
-      markers: [{
-        title: 'R. Bancários Sérgio Guerra x R. João Batista Maia',
-        level: 0,
-        coordinate:{
-          latitude: -7.15016224,
-          longitude: -34.8407793,
-        }
-      }]
+      markers: []
     }
+
+    this.update()
+    setInterval(() => {
+      this.update()
+    }, 5 * 1000)
+  }
+
+  update() {
+    fetch('http://alagometro.herokuapp.com/')
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        this.setState({markers: data.map((d) => {
+          return {
+            title: d.title,
+            level: d.level,
+            coordinate: {
+              latitude: parseFloat(d.lat),
+              longitude: parseFloat(d.lng),
+            },
+            last_update: d.last_update
+          }
+        })})
+      })
   }
 
   label(level) {
@@ -37,6 +57,13 @@ export default class App extends React.Component {
     return colors[level]
   }
 
+  desc(marker) {
+    let updated = moment(marker.last_update)
+    updated.locale('pt-br')
+
+    return `${this.label(marker.level)} / ${updated.fromNow()}`
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -44,17 +71,19 @@ export default class App extends React.Component {
           style={styles.mapStyle}
           loadingEnabled={true}
           region={this.state.region}
+          showsUserLocation={true}
+          onRegionChangeComplete={(region) => this.setState({region: region})}
         >
           {this.state.markers.map((marker, i) => {
             return <MapView.Marker
-                      key={i}
+                      key={`${i}-${marker.level}`}
                       onLoad={() => this.forceUpdate()}
                       coordinate={marker.coordinate}
                       title={marker.title}
                       pinColor={this.pinColor(marker.level)}
-                      description={this.label(marker.level)}
+                      description={this.desc(marker)}
                     />
-                    
+
           })}
         </MapView>
       </View>
