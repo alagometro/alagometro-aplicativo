@@ -61,7 +61,7 @@ export default class App extends React.Component {
     let updated = moment(marker.last_update)
     updated.locale('pt-br')
 
-    return `${this.label(marker.level)} / ${updated.fromNow()}`
+    return `Atualizado ${updated.fromNow()}`
   }
 
   render() {
@@ -82,7 +82,18 @@ export default class App extends React.Component {
                       title={marker.title}
                       pinColor={this.pinColor(marker.level)}
                       description={this.desc(marker)}
-                    />
+                    >
+                    <MapView.Callout
+                      tooltip={false}
+                      style={styles.tooltip}
+                    >
+                      <View>
+                        <Text style={styles.title}>{marker.title}</Text>
+                        <Text>{this.label(marker.level)}</Text>
+                        <Text style={styles.date}>{this.desc(marker)}</Text>
+                      </View>
+                    </MapView.Callout>
+                    </MapView.Marker>
 
           })}
         </MapView>
@@ -92,11 +103,21 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    fontWeight: 'bold'
+  },
+  date: {
+    color: '#888'
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  tooltip: {
+    backgroundColor: '#fff',
+    padding: 10
   },
   mapStyle: {
     position: 'absolute',
