@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "alagometro-aplicativo",
-    "slug": "alagometro-aplicativo",
+    "name": "Alagômetro",
+    "slug": "alagometro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,6 +21,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "android": {
+      "package": "br.com.alagometro"
     }
   }
 }
