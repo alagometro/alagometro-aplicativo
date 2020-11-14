@@ -48,12 +48,14 @@ export default class App extends React.Component {
   label(level) {
     const labels = ['Sem Alagamentos', 'Pouca água (15cm)', 'Alagamento Moderado (30cm)', 'Alagado (45cm)']
 
+    if (level === 10) return 'Não é possível identificar o nível de água'
     return labels[level]
   }
 
   pinColor(level) {
     const colors = ['#42a83b', '#34e5eb', '#3c8db5', '#0069e0']
 
+    if(level === 10) return '#666'
     return colors[level]
   }
 
